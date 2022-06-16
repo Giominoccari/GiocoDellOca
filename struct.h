@@ -1,13 +1,13 @@
 
 #define MAX_CHAR 50
 
-typedef struct giocatore{
+struct giocatore{
     char colore;
     int num;
     int pos;
 };
 
-typedef struct casella{
+struct casella{
     int num;
     char type[10];
     int val;
