@@ -7,6 +7,7 @@
 #include "gioca.h"
 
 void crea_coda(struct coda* seq, int num, struct giocatore* nuovo){
+    char c;
     for(int i=0; i<num; i++){
         if((nuovo = (struct giocatore*)malloc(sizeof(struct giocatore)))!=NULL){
             if(i==0){
@@ -24,15 +25,15 @@ void crea_coda(struct coda* seq, int num, struct giocatore* nuovo){
             seq->c->salto=false;
             printf("inserisci un numero identificativo di massimo 2 cifre:");
             scanf("%d", &(seq->c->num));
-            //printf("seleziona colore identificativo tra giallo, blu, viola, rosso, verde");
-            //do{
-                //fflush(stdin);
-                //c=getchar();
-            //}while(c!='g' && c!='b' && c!='v' && c!='r' && c!='v');
-            //switch(c){
-                //colori
+            printf("seleziona colore identificativo tra giallo, blu, magenta, rosso, verde");
+            do{
+                fflush(stdin);
+                c=getchar();
+            }while(c!='g' && c!='b' && c!='v' && c!='r' && c!='v');
+            switch(c){
+                case 'g':
 
-            //}
+            }
         }else{
             printf("no spazio per tutti");
         }
@@ -41,15 +42,18 @@ void crea_coda(struct coda* seq, int num, struct giocatore* nuovo){
 
 int domanda(struct casella *tab, int posg, int post){
     char risp[MAX_CHAR];
-    printf("rispondi a questa domanda per avanzare di %d caselle :%s  =%s\n", (tab+post)->val, (tab+post)->dom, (tab+post)->risp);
+    char risps[MAX_CHAR];
+    char rispi[MAX_CHAR];
+    printf("rispondi a questa domanda per avanzare di %d caselle :%s\n", (tab+post)->val, (tab+post)->dom);
+    strncpy(risps, (tab+post)->risp, strlen((tab+post)->risp)-1);
     fflush(stdin);
     scanf("%s", risp);
-    if(strcmp(risp, (tab+post)->risp)==0){
-        printf("bravo!");
+    if(strcmp(risp, risps)==0){
+        printf("bravo!\n");
         posg+=(tab+post)->val;
         return posg;
     }else{
-        printf("nope");
+        printf("nope\n");
         return posg;
     }
 }
@@ -65,6 +69,7 @@ int scivolo(struct casella *tab, int posg, int post){
 }
 
 void gioca_partita(struct coda *seq, struct casella *tab, int num){
+    char topo[10];
     int postab;
     int posg;
     int dado;      
@@ -82,13 +87,20 @@ void gioca_partita(struct coda *seq, struct casella *tab, int num){
             do{
                 y=getchar();
             }while(y!='y');
+            for(int b=0; b<63; b++){
+                if((tab+b)->num==seq->t->pos){
+                    postab=b;
+                    break;
+                }
+            }
+            (tab+postab)->giocatore=0;
             dado=rand()%6+1;
             printf("hai fatto %d\n", dado);
             seq->t->pos=(seq->t->pos)+dado;
             posg=seq->t->pos;
             printf("pos=%d\n", posg);
             if(posg==63){
-                    break;
+                break;
             }
             do{
                 int vec=posg;
@@ -108,7 +120,10 @@ void gioca_partita(struct coda *seq, struct casella *tab, int num){
                 if(((tab+postab)->type)==2){
                     seq->t->salto=true;
                 }
-                printf("pos=%d", posg);
+                if(posg>63){
+                    posg=posg-(posg-63);
+                }
+                printf("pos=%d\n", posg);
                 if(vec==posg){
                     break;
                 }
@@ -119,12 +134,28 @@ void gioca_partita(struct coda *seq, struct casella *tab, int num){
                     }
                 }
                 seq->t->pos=posg;
-                printf("type postab=%d  postab=%d", (tab+postab)->type, postab);
             }while((tab+postab)->type==0 || (tab+postab)->type==1 || (tab+postab)->type==2);
         }else{
+            printf("salta il turno\n");
             seq->t->salto=false;
         }
-        printf("bomba2");
+        (tab+postab)->giocatore=seq->t->num;
+        for(int i=1; i<=63; i++){
+            switch((tab+i-1)->type){
+                case 0: strcpy(topo, "scala");
+                    break;
+                case 1: strcpy(topo, "scivolo");
+                    break;
+                case 2: strcpy(topo, "salto");
+                    break;
+                case 3: strcpy(topo, "   ");
+                }
+            printf("|%2d  %2d  %7s|", (tab+i-1)->num, (tab+i-1)->giocatore , topo);
+            if(i%9==0){
+                printf("\n");
+            }
+        }
+        if(num>1){
         temp=seq->t;
         seq->t=seq->t->next;
         temp->next=NULL;
@@ -132,5 +163,6 @@ void gioca_partita(struct coda *seq, struct casella *tab, int num){
         seq->c=temp;
         temp=NULL;
         free(temp);
+        }
     }while(true);
 }

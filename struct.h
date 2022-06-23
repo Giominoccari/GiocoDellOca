@@ -10,6 +10,7 @@ struct giocatore{
 };
 
 struct casella{
+    int giocatore;
     int num;
     int type;
     int val;

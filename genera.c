@@ -59,31 +59,36 @@ void genera_partita(struct casella *tab, int *num){
                 if (rand()%3==0){
                     if(y==true){
                         y=false;
-                        switch (rand()%3) {
+                        switch (rand()%1) {
                             case 0:
                                 //printf("scala  %d\n", j);
                                 inserisci_scala(j, tab, fpd, fpr);
+                                (tab+j)->giocatore=0;
                                 k++;
                                 break;
 
                             case 1:
                                 //printf("scivolo %d\n", j);
                                 inserisci_scivolo(j, tab);
+                                (tab+j)->giocatore=0;
                                 k++;
                                 break;
 
                             case 2:
                                 //printf("salto %d\n", j);
                                 salta_turno(j, tab);
+                                (tab+j)->giocatore=0;
                                 k++;
                                 break;
                         }
                     }else{
                         y=true;
                         (tab+j)->type=3;
+                        (tab+j)->giocatore=0;
                     }
                 }else{
                     (tab+j)->type=3;
+                    (tab+j)->giocatore=0;
                 }
         }
     }
