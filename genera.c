@@ -8,28 +8,21 @@
  
 
 void inserisci_scala(int j, struct casella *tab, FILE *fpd, FILE *fpr){
-    srand(time(NULL));
-    char *filenamed="domande.txt";
-    char *filenamer="risposte.txt";
-    
+    static int i=0;
     (tab+j)->type=0;
-    if(fpd==NULL){
-        if ((fpd = fopen(filenamed, "r+")) != NULL){
-            if((fpr = fopen(filenamer, "r+")) != NULL) {
-                fgets((tab+j)->dom, 100, fpd);
-                fgets((tab+j)->risp, 50, fpr);
-                (tab+j)->val=rand()%10+5;
-            }
-        }
-    }else{
-        fgets((tab+j)->dom, 100, fpd);
-        fgets((tab+j)->risp, 50, fpr);
-        (tab+j)->val=rand()%10+5;
+    fgets((tab+j)->dom, 100, fpd);
+    fgets((tab+j)->risp, 50, fpr);
+    printf("%s\n", (tab+j)->risp);
+    (tab+j)->val=rand()%10+5;
+    i++;
+    if(i==4){
+        rewind(fpd);
+        rewind(fpr);
+        i=0;
     }
 }
 
 void inserisci_scivolo(int j, struct casella *tab){
-    srand(time(NULL));
     (tab+j)->val=rand()%10+5;
     (tab+j)->type=1;
 }
@@ -48,48 +41,50 @@ void genera_partita(struct casella *tab, int *num){
     FILE *fpd=NULL;
     FILE *fpr=NULL;
 
+    char *filenamed="domande.txt";
+    char *filenamer="risposte.txt";
+
+    if ((fpd = fopen(filenamed, "r+")) != NULL){
+        if((fpr = fopen(filenamer, "r+")) != NULL) {
     // costruisco tabella
-    for(int i=0; i<63; i++){
-        for(int j=0; j<63; j++) {
-            
-                //d=;
-                //a=;
-                //printf("d=%d\n", d);
-                //printf("%d===%d\n", (tab+j)->num, *(num+i));
-                if (rand()%3==0){
-                    if(y==true){
-                        y=false;
-                        switch (rand()%1) {
-                            case 0:
-                                //printf("scala  %d\n", j);
-                                inserisci_scala(j, tab, fpd, fpr);
-                                (tab+j)->giocatore=0;
-                                k++;
-                                break;
-
-                            case 1:
-                                //printf("scivolo %d\n", j);
-                                inserisci_scivolo(j, tab);
-                                (tab+j)->giocatore=0;
-                                k++;
-                                break;
-
-                            case 2:
-                                //printf("salto %d\n", j);
-                                salta_turno(j, tab);
-                                (tab+j)->giocatore=0;
-                                k++;
-                                break;
+            for(int j=0; j<63; j++){
+                    //d=;
+                    //a=;
+                    //printf("d=%d\n", d);
+                    //printf("%d===%d\n", (tab+j)->num, *(num+i));
+                    if (rand()%3==0){
+                        if(y==true){
+                            y=false;
+                            switch (rand()%3){
+                                case 0:
+                                    //printf("scala  %d\n", j);
+                                    inserisci_scala(j, tab, fpd, fpr);
+                                    (tab+j)->giocatore=0;
+                                    k++;
+                                        break;
+                                case 1:
+                                    //printf("scivolo %d\n", j);
+                                    inserisci_scivolo(j, tab);
+                                    (tab+j)->giocatore=0;
+                                    k++;
+                                        break;
+                                case 2:
+                                    //printf("salto %d\n", j);
+                                    salta_turno(j, tab);
+                                    (tab+j)->giocatore=0;
+                                    k++;
+                                        break;
+                            }
+                        }else{
+                            y=true;
+                            (tab+j)->type=3;
+                            (tab+j)->giocatore=0;
                         }
                     }else{
-                        y=true;
                         (tab+j)->type=3;
                         (tab+j)->giocatore=0;
                     }
-                }else{
-                    (tab+j)->type=3;
-                    (tab+j)->giocatore=0;
-                }
+            }
         }
     }
     fclose(fpd);

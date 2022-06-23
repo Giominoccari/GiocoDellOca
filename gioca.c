@@ -21,19 +21,11 @@ void crea_coda(struct coda* seq, int num, struct giocatore* nuovo){
                 nuovo=NULL;
             }
             free(nuovo);
+            seq->c->pos_coda=i+1;
             seq->c->pos=0;
             seq->c->salto=false;
             printf("inserisci un numero identificativo di massimo 2 cifre:");
             scanf("%d", &(seq->c->num));
-            printf("seleziona colore identificativo tra giallo, blu, magenta, rosso, verde");
-            do{
-                fflush(stdin);
-                c=getchar();
-            }while(c!='g' && c!='b' && c!='v' && c!='r' && c!='v');
-            switch(c){
-                case 'g':
-
-            }
         }else{
             printf("no spazio per tutti");
         }
@@ -44,7 +36,7 @@ int domanda(struct casella *tab, int posg, int post){
     char risp[MAX_CHAR];
     char risps[MAX_CHAR];
     char rispi[MAX_CHAR];
-    printf("rispondi a questa domanda per avanzare di %d caselle :%s\n", (tab+post)->val, (tab+post)->dom);
+    printf("rispondi a questa domanda per avanzare di %d caselle :%s \n", (tab+post)->val, (tab+post)->dom);
     strncpy(risps, (tab+post)->risp, strlen((tab+post)->risp)-1);
     fflush(stdin);
     scanf("%s", risp);
@@ -82,6 +74,8 @@ void gioca_partita(struct coda *seq, struct casella *tab, int num){
     crea_coda(seq, num, nuovo);
     srand(time(NULL));
     do{
+        int l=0;
+        l++;
         if(seq->t->salto!=true){
             printf("giocatore %d tira i dadi, premi y per tirare\n", seq->t->num);
             do{
@@ -91,6 +85,11 @@ void gioca_partita(struct coda *seq, struct casella *tab, int num){
                 if((tab+b)->num==seq->t->pos){
                     postab=b;
                     break;
+                }
+            }
+            if(l%num==0){
+                for(int i=0; i<63; i++){
+                    (tab+i)->col_gioc=0;
                 }
             }
             (tab+postab)->giocatore=0;
@@ -103,6 +102,10 @@ void gioca_partita(struct coda *seq, struct casella *tab, int num){
                 break;
             }
             do{
+                if(seq->t->pos==63){
+                    printf("vince il giocatore %d", seq->t->num);
+                    break;
+                }
                 int vec=posg;
                 for(int b=0; b<63; b++){
                     if((tab+b)->num==posg){
@@ -121,7 +124,7 @@ void gioca_partita(struct coda *seq, struct casella *tab, int num){
                     seq->t->salto=true;
                 }
                 if(posg>63){
-                    posg=posg-(posg-63);
+                    posg=63-(posg-63);
                 }
                 printf("pos=%d\n", posg);
                 if(vec==posg){
@@ -135,10 +138,15 @@ void gioca_partita(struct coda *seq, struct casella *tab, int num){
                 }
                 seq->t->pos=posg;
             }while((tab+postab)->type==0 || (tab+postab)->type==1 || (tab+postab)->type==2);
+            if(seq->t->pos==63){
+                    printf("vince il giocatore %d", seq->t->num);
+                    break;
+            }
         }else{
             printf("salta il turno\n");
-            seq->t->salto=false;
         }
+            seq->t->salto=false;
+        (tab+postab)->col_gioc=seq->t->pos_coda;
         (tab+postab)->giocatore=seq->t->num;
         for(int i=1; i<=63; i++){
             switch((tab+i-1)->type){
@@ -150,7 +158,20 @@ void gioca_partita(struct coda *seq, struct casella *tab, int num){
                     break;
                 case 3: strcpy(topo, "   ");
                 }
-            printf("|%2d  %2d  %7s|", (tab+i-1)->num, (tab+i-1)->giocatore , topo);
+            switch((tab+i-1)->col_gioc){
+                case 0:  printf("|%2d  %2d  %7s|", (tab+i-1)->num, (tab+i-1)->giocatore , topo);
+                    break;
+                case 1: printf("|%2d  "ROSSO"%2d"RESET"  %7s|", (tab+i-1)->num, (tab+i-1)->giocatore , topo);;
+                    break;
+                case 2: printf("|%2d  "BLU"%2d"RESET"  %7s|", (tab+i-1)->num, (tab+i-1)->giocatore , topo);
+                    break;
+                case 3: printf("|%2d  "VERDE"%2d"RESET"  %7s|", (tab+i-1)->num, (tab+i-1)->giocatore , topo);
+                    break;
+                case 4: printf("|%2d  "MAGENTA"%2d"RESET"  %7s|", (tab+i-1)->num, (tab+i-1)->giocatore , topo);
+                    break;
+                case 5: printf("|%2d  "GIALLO"%2d"RESET"  %7s|", (tab+i-1)->num, (tab+i-1)->giocatore , topo);
+                }
+            
             if(i%9==0){
                 printf("\n");
             }
