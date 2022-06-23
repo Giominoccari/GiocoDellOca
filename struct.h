@@ -1,18 +1,25 @@
 
-#define MAX_CHAR 50
+#define MAX_CHAR 100
 
 struct giocatore{
     char colore;
     int num;
     int pos;
+    bool salto;
+    struct giocatore *next;
 };
 
 struct casella{
     int num;
-    char type[10];
+    int type;
     int val;
-    bool salto;
     char dom[MAX_CHAR];
     char risp[MAX_CHAR];
 };
 
+struct coda{
+    struct giocatore *t;
+    struct giocatore *c;
+};
+
+typedef struct coda coda;
