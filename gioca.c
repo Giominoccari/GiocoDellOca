@@ -76,7 +76,6 @@ void gioca_partita(struct coda *seq, struct casella *tab, int num){
     srand(time(NULL));
     do{
         printf("l=%d  num+1=%d\n", l, num);
-        if(l%(num+1)==0){
             printf("cancella\n");
             for(int i=0; i<63; i++){
                 if((tab+i)->col_gioc==seq->t->num){
@@ -84,7 +83,6 @@ void gioca_partita(struct coda *seq, struct casella *tab, int num){
                     (tab+i)->giocatore=0;
                 }
             }
-        }
         l++;
         if(seq->t->salto!=true){
             printf("giocatore %d tira i dadi, premi y per tirare\n", seq->t->num);
