@@ -62,6 +62,7 @@ int scivolo(struct casella *tab, int posg, int post){
 
 void gioca_partita(struct coda *seq, struct casella *tab, int num){
     char topo[10];
+    int l=1;
     int postab;
     int posg;
     int dado;      
@@ -74,7 +75,16 @@ void gioca_partita(struct coda *seq, struct casella *tab, int num){
     crea_coda(seq, num, nuovo);
     srand(time(NULL));
     do{
-        int l=0;
+        printf("l=%d  num+1=%d\n", l, num);
+        if(l%(num+1)==0){
+            printf("cancella\n");
+            for(int i=0; i<63; i++){
+                if((tab+i)->col_gioc==seq->t->num){
+                    (tab+i)->col_gioc=0;
+                    (tab+i)->giocatore=0;
+                }
+            }
+        }
         l++;
         if(seq->t->salto!=true){
             printf("giocatore %d tira i dadi, premi y per tirare\n", seq->t->num);
@@ -87,12 +97,6 @@ void gioca_partita(struct coda *seq, struct casella *tab, int num){
                     break;
                 }
             }
-            if(l%num==0){
-                for(int i=0; i<63; i++){
-                    (tab+i)->col_gioc=0;
-                }
-            }
-            (tab+postab)->giocatore=0;
             dado=rand()%6+1;
             printf("hai fatto %d\n", dado);
             seq->t->pos=(seq->t->pos)+dado;
