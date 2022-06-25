@@ -27,7 +27,7 @@ void crea_coda(struct coda* seq, int num, struct giocatore* nuovo){
             printf("inserisci un numero identificativo di massimo 2 cifre:");
             scanf("%d", &(seq->c->num));
         }else{
-            printf("no spazio per tutti");
+            printf("no spazio per tutti\n");
         }
     }
 }
@@ -62,7 +62,6 @@ int scivolo(struct casella *tab, int posg, int post){
 
 void gioca_partita(struct coda *seq, struct casella *tab, int num){
     char topo[10];
-    int l=1;
     int postab;
     int posg;
     int dado;      
@@ -75,16 +74,13 @@ void gioca_partita(struct coda *seq, struct casella *tab, int num){
     crea_coda(seq, num, nuovo);
     srand(time(NULL));
     do{
-        printf("l=%d  num+1=%d\n", l, num);
-            printf("cancella\n");
             for(int i=0; i<63; i++){
-                if((tab+i)->col_gioc==seq->t->num){
+                if((tab+i)->giocatore==seq->t->num){
                     (tab+i)->col_gioc=0;
                     (tab+i)->giocatore=0;
                 }
             }
-        l++;
-        if(seq->t->salto!=true){
+        if(seq->t->salto==0){
             printf("giocatore %d tira i dadi, premi y per tirare\n", seq->t->num);
             do{
                 y=getchar();
@@ -99,13 +95,12 @@ void gioca_partita(struct coda *seq, struct casella *tab, int num){
             printf("hai fatto %d\n", dado);
             seq->t->pos=(seq->t->pos)+dado;
             posg=seq->t->pos;
-            printf("pos=%d\n", posg);
             if(posg==63){
                 break;
             }
             do{
                 if(seq->t->pos==63){
-                    printf("vince il giocatore %d", seq->t->num);
+                    printf("vince il giocatore %d\n", seq->t->num);
                     break;
                 }
                 int vec=posg;
@@ -115,20 +110,21 @@ void gioca_partita(struct coda *seq, struct casella *tab, int num){
                         break;
                     }
                 }
-                printf("sei finito su una casella tipo %d\n", (tab+postab)->type);
                 if(((tab+postab)->type)==0){
+                    printf("sei finito su una casella tipo scala\n");
                     posg=domanda(tab, posg, postab);
                 }
                 if(((tab+postab)->type)==1){
+                    printf("sei finito su una casella tipo scivolo\n");
                     posg=scivolo(tab, posg, postab);
                 }
                 if(((tab+postab)->type)==2){
+                    printf("sei finito su una casella tipo salta turno\n");
                     seq->t->salto=true;
                 }
                 if(posg>63){
                     posg=63-(posg-63);
                 }
-                printf("pos=%d\n", posg);
                 if(vec==posg){
                     break;
                 }
@@ -146,8 +142,8 @@ void gioca_partita(struct coda *seq, struct casella *tab, int num){
             }
         }else{
             printf("salta il turno\n");
-        }
             seq->t->salto=false;
+        }
         (tab+postab)->col_gioc=seq->t->pos_coda;
         (tab+postab)->giocatore=seq->t->num;
         for(int i=1; i<=63; i++){

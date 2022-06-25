@@ -12,7 +12,6 @@ void inserisci_scala(int j, struct casella *tab, FILE *fpd, FILE *fpr){
     (tab+j)->type=0;
     fgets((tab+j)->dom, 100, fpd);
     fgets((tab+j)->risp, 50, fpr);
-    printf("%s\n", (tab+j)->risp);
     (tab+j)->val=rand()%10+5;
     i++;
     if(i==4){
@@ -89,7 +88,6 @@ void genera_partita(struct casella *tab, int *num){
     }
     fclose(fpd);
     fclose(fpr);
-    printf("k= %d\n", k);
     for(int i=1; i<=63; i++){
         switch((tab+i-1)->type){
             case 0: strcpy(topo, "scala");
